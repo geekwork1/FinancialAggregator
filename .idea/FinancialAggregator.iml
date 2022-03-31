@@ -11,6 +11,8 @@
       <sourceFolder url="file://$MODULE_DIR$/finaggregator/finaggregator" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/finaggregator/mainapp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/finaggregator" isTestSource="false" />
+      <excludeFolder url="file://$MODULE_DIR$/.idea/inspectionProfiles" />
+      <excludeFolder url="file://$MODULE_DIR$/venv" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
@@ -20,6 +22,7 @@
     <option name="TEMPLATE_FOLDERS">
       <list>
         <option value="$MODULE_DIR$/finaggregator/mainapp/templates" />
+        <option value="$MODULE_DIR$/finaggregator/usersapp/templates" />
       </list>
     </option>
   </component>
