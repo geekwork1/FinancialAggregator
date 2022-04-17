@@ -14,36 +14,35 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 import mainapp.views as mainapp
 from django.conf import settings
 from django.conf.urls.static import static
+from rest_framework.routers import DefaultRouter
+from mainapp.views import BankDetail, ClientDetail, ClientFinanceHistoryDetail, ServiceCreditDetail, DocumentDetail, \
+    PassportPersonDetail, ServiceDetail, PersonDetail, UserDetail, SnippetDetail
 
-from mainapp import views
+app_name = "mainapp"
+router = DefaultRouter()
+
+router.register('passport', PassportPersonDetail, basename='passport')
+router.register('person', PersonDetail, basename='person')
+router.register('client', ClientDetail, basename='client')
+router.register('clients_finance_history', ClientFinanceHistoryDetail, basename='clients_finance_history')
+router.register('document', DocumentDetail, basename='document')
+router.register('bank', BankDetail, basename='bank')
+router.register('service', ServiceDetail, basename='service')
+router.register('service-credit', ServiceCreditDetail, basename='service-credit')
+router.register('user', UserDetail, basename='user')
+router.register('snippet', SnippetDetail, basename='snippet')
+
 
 urlpatterns = [
-    path('', mainapp.main),
-    path('contact/', mainapp.contact, name='contact'),
-    path('product/', mainapp.product, name='product'),
-    path('pasport/', views.PassportPersonList.as_view(), name='person_list'),
-    path('passport/<int:pk>/', views.PassportPersonDetail.as_view()),
-    path('person/', views.PersonList.as_view(), name='person_list'),
-    path('person/<int:pk>/', views.PersonDetail.as_view()),
-    path('client/', views.ClientList.as_view(), name='person_list'),
-    path('client/<int:pk>/', views.ClientDetail.as_view()),
-    path('clients_finance_history/', views.ClientFinanceHistoryList.as_view(), name='person_list'),
-    path('clients_finance_history/<int:pk>/', views.ClientFinanceHistoryDetail.as_view()),
-    path('document/', views.DocumentList.as_view(), name='person_list'),
-    path('document/<int:pk>/', views.DocumentDetail.as_view()),
-    path('bank/', views.BankList.as_view(), name='person_list'),
-    path('bank/<int:pk>/', views.BankDetail.as_view()),
-    path('serviece/', views.ServiceList.as_view(), name='person_list'),
-    path('service/<int:pk>/', views.ServiceDetail.as_view()),
-    path('serviececredit/', views.ServiceCreditList.as_view(), name='person_list'),
-    path('servicecredit/<int:pk>/', views.ServiceCreditDetail.as_view()),
-]
 
+    path('', include(router.urls)),
+
+]
+urlpatterns += router.urls
 
 if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL,
-                          document_root=settings.MEDIA_ROOT)
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

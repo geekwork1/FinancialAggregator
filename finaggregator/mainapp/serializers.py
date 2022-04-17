@@ -1,52 +1,86 @@
 from rest_framework import serializers
-from mainapp.models import PassportPerson, Person, Client, ClientFinanceHistory, Document, Bank, Service, ServiceCredit
+from mainapp.models import PassportPerson, Person, Client, ClientFinanceHistory, Document, Bank, Service, \
+    ServiceCredit, Snippet
+from django.contrib.auth.models import User
 
 """
     https://www.django-rest-framework.org/tutorial/1-serialization/
 """
 
+
+# class SnippetSerializerHighlight(serializers.HyperlinkedModelSerializer):
+#     url = serializers.HyperlinkedIdentityField(view_name="mainapp")
+#     owner = serializers.ReadOnlyField(source='owner.username')
+#     highlight = serializers.HyperlinkedIdentityField(
+#         view_name='snippet-highlight', format='html')
+#
+#     class Meta:
+#         model = Snippet
+#         fields = ('url', 'highlight', 'owner', 'title', 'code', 'linenos', 'language', 'style')
+
+
+
+class SnippetSerializer(serializers.ModelSerializer):
+    owner = serializers.ReadOnlyField(source='owner.username')
+
+    class Meta:
+        model = Snippet
+        fields = ['id', 'title', 'code', 'linenos', 'language', 'style', 'owner', 'highlighted']
+
+
+class UserSerializer(serializers.ModelSerializer):
+    snippets = serializers.PrimaryKeyRelatedField(many=True, queryset=Snippet.objects.all())
+
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'snippets']
+
+
 class PersonSerializer(serializers.ModelSerializer):
     class Meta:
         model = Person
-        fields = ['inn', 'name', 'last_name', 'sur_name', 'telephone', 'email', 'registration_city',
-                  'registration_region', 'registration_street', 'registration_building', 'registration_room',
-                  'documents', 'updated']
+        fields = '__all__'
+
 
 class PassportPersonSerializer(serializers.ModelSerializer):
     class Meta:
         model = PassportPerson
-        fields = ['number', 'date', 'scan_document', 'updated']
+        fields = '__all__'
+
+    owner = serializers.ReadOnlyField(source='owner.username')
+
 
 class ClientSerializer(serializers.ModelSerializer):
     class Meta:
         model = Client
-        fields = ['inn', 'organization_type', 'title', 'task', 'director', 'telephone', 'email', 'site',
-                  'registration_city', 'registration_region', 'registration_street', 'registration_building',
-                  'registration_room', 'updated']
+        fields = '__all__'
+
 
 class ClientFinanceHistorySerializer(serializers.ModelSerializer):
     class Meta:
         model = ClientFinanceHistory
-        fields = ['name', 'client', 'updated']
+        fields = '__all__'
+
 
 class DocumentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Document
-        fields = ['name', 'client', 'order', 'decree', 'lease_contract', 'document', 'declaration_one',
-                  'declaration_two', 'declaration_three', 'balance_one', 'balance_two', 'balance_three',
-                  'updated', 'updated']
+        fields = '__all__'
+
 
 class BankSerializer(serializers.ModelSerializer):
     class Meta:
         model = Bank
-        fields = ['name', 'task', 'client', 'updated']
+        fields = '__all__'
+
 
 class ServiceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Service
-        fields = ['name', 'task', 'updated']
+        fields = '__all__'
+
 
 class ServiceCreditSerializer(serializers.ModelSerializer):
     class Meta:
         model = ServiceCredit
-        fields = ['name', 'task', 'client', 'total', 'deposit', 'credit_term', 'updated']
+        fields = '__all__'

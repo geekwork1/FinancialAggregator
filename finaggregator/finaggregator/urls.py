@@ -18,13 +18,22 @@ from django.urls import path, include
 import mainapp.views as mainapp
 from django.conf import settings
 from django.conf.urls.static import static
-
+from rest_framework.urlpatterns import format_suffix_patterns
 
 urlpatterns = [
-    path('', include('mainapp.urls')),
+    path('', mainapp.main, name='main'),
+    path('product', mainapp.product, name='product'),
+    path('contact', mainapp.contact, name='contact'),
     path('admin/', admin.site.urls),
+    path('api/', include('mainapp.urls')),
 ]
 
+# urlpatterns = format_suffix_patterns(urlpatterns)
+# format= None - added to views parameters
+
+urlpatterns += [
+    path('api-auth/', include('rest_framework.urls')),
+]
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL,
