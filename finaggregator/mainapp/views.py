@@ -2,7 +2,7 @@ from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework.generics import GenericAPIView
-from rest_framework.viewsets import ModelViewSet
+from rest_framework.viewsets import ModelViewSet,ReadOnlyModelViewSet
 from rest_framework import permissions, renderers
 from mainapp.models import Person, Client, PassportPerson, Service, ServiceCredit, Bank, Document, \
     ClientFinanceHistory, Snippet
@@ -18,9 +18,10 @@ https://www.django-rest-framework.org/tutorial/1-serialization/
 """
 
 
-class SnippetDetail(ModelViewSet):
-    queryset = Snippet.objects.all()
-    serializer_class = SnippetSerializer
+class ParentModelViewSet(ModelViewSet):
+    class Meta:
+        abstract = True
+
     permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
 
     @action(detail=True, renderer_classes=[renderers.StaticHTMLRenderer])
@@ -32,60 +33,55 @@ class SnippetDetail(ModelViewSet):
         serializer.save(owner=self.request.user)
 
 
-class UserDetail(ModelViewSet):
+class SnippetDetail(ParentModelViewSet):
+    queryset = Snippet.objects.all()
+    serializer_class = SnippetSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
+
+
+class UserDetail(ReadOnlyModelViewSet):
+    permission_classes = [IsOwnerOrReadOnly]
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
 
-# class SnippetDetail(ModelViewSet):
-#     queryset = Snippet.objects.all()
-#     serializer_class = SnippetSerializer
-#     permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
-#
-#     def perform_create(self, serializer):
-#         serializer.save(owner=self.request.user)
-
-
-class PassportPersonDetail(ModelViewSet):
+class PassportPersonDetail(ParentModelViewSet):
     queryset = PassportPerson.objects.all()
     serializer_class = PassportPersonSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
 
-    def perform_create(self, serializer):
-        serializer.save(owner=self.request.user)
 
-
-class PersonDetail(ModelViewSet):
+class PersonDetail(ParentModelViewSet):
     queryset = Person.objects.all()
     serializer_class = PersonSerializer
 
 
-class ClientDetail(ModelViewSet):
+class ClientDetail(ParentModelViewSet):
     queryset = Client.objects.all()
     serializer_class = ClientSerializer
 
 
-class ClientFinanceHistoryDetail(ModelViewSet):
+class ClientFinanceHistoryDetail(ParentModelViewSet):
     queryset = ClientFinanceHistory.objects.all()
     serializer_class = ClientFinanceHistorySerializer
 
 
-class DocumentDetail(ModelViewSet):
+class DocumentDetail(ParentModelViewSet):
     queryset = Document.objects.all()
     serializer_class = DocumentSerializer
 
 
-class BankDetail(ModelViewSet):
+class BankDetail(ParentModelViewSet):
     queryset = Bank.objects.all()
     serializer_class = BankSerializer
 
 
-class ServiceDetail(ModelViewSet):
+class ServiceDetail(ParentModelViewSet):
     queryset = Service.objects.all()
     serializer_class = ServiceSerializer
 
 
-class ServiceCreditDetail(ModelViewSet):
+class ServiceCreditDetail(ParentModelViewSet):
     queryset = ServiceCredit.objects.all()
     serializer_class = ServiceCreditSerializer
 

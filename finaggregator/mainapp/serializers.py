@@ -8,44 +8,37 @@ from django.contrib.auth.models import User
 """
 
 
-# class SnippetSerializerHighlight(serializers.HyperlinkedModelSerializer):
-#     url = serializers.HyperlinkedIdentityField(view_name="mainapp")
-#     owner = serializers.ReadOnlyField(source='owner.username')
-#     highlight = serializers.HyperlinkedIdentityField(
-#         view_name='snippet-highlight', format='html')
-#
-#     class Meta:
-#         model = Snippet
-#         fields = ('url', 'highlight', 'owner', 'title', 'code', 'linenos', 'language', 'style')
-
-
-
 class SnippetSerializer(serializers.ModelSerializer):
     owner = serializers.ReadOnlyField(source='owner.username')
 
     class Meta:
         model = Snippet
-        fields = ['id', 'title', 'code', 'linenos', 'language', 'style', 'owner', 'highlighted']
+        fields = ['id', 'title', 'owner']
 
 
 class UserSerializer(serializers.ModelSerializer):
-    snippets = serializers.PrimaryKeyRelatedField(many=True, queryset=Snippet.objects.all())
 
     class Meta:
         model = User
-        fields = ['id', 'username', 'snippets']
+        fields = ['id', 'username']
 
 
 class PersonSerializer(serializers.ModelSerializer):
     class Meta:
         model = Person
-        fields = '__all__'
+        fields = [
+            'inn', 'name', 'last_name', 'sur_name', 'telephone', 'email', 'registration_city',
+            'registration_region', 'registration_building', 'registration_room', 'documents',
+            'updated',
+        ]
 
 
 class PassportPersonSerializer(serializers.ModelSerializer):
     class Meta:
         model = PassportPerson
-        fields = '__all__'
+        fields = [
+            'number', 'date', 'scan_document', 'updated', 'owner'
+        ]
 
     owner = serializers.ReadOnlyField(source='owner.username')
 
@@ -53,34 +46,50 @@ class PassportPersonSerializer(serializers.ModelSerializer):
 class ClientSerializer(serializers.ModelSerializer):
     class Meta:
         model = Client
-        fields = '__all__'
+        fields = [
+            'inn', 'organization_type', 'title', 'task', 'director', 'telephone',
+            'email', 'site', 'registration_city', 'registration_region',
+            'registration_street', 'registration_building', 'registration_room', 'updated', 'owner'
+        ]
 
 
 class ClientFinanceHistorySerializer(serializers.ModelSerializer):
     class Meta:
         model = ClientFinanceHistory
-        fields = '__all__'
+        fields = [
+            'name', 'client', 'updated', 'owner'
+        ]
 
 
 class DocumentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Document
-        fields = '__all__'
+        fields = [
+            'name','client', 'order', 'decree', 'lease_contract', 'document',
+            'declaration_one', 'declaration_two', 'declaration_three', 'balance_one',
+            'balance_two', 'balance_three', 'updated', 'owner'
+        ]
 
 
 class BankSerializer(serializers.ModelSerializer):
     class Meta:
         model = Bank
-        fields = '__all__'
+        fields = [
+            'name', 'task', 'client', 'updated', 'owner'
+        ]
 
 
 class ServiceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Service
-        fields = '__all__'
+        fields = [
+            'name', 'task', 'updated', 'owner'
+        ]
 
 
 class ServiceCreditSerializer(serializers.ModelSerializer):
     class Meta:
         model = ServiceCredit
-        fields = '__all__'
+        fields = [
+            'name', 'task', 'client', 'total', 'deposit', 'credit_term', 'updated', 'owner'
+        ]
