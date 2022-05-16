@@ -48,7 +48,7 @@ class SnippetDetail(ParentModelViewSet):
     permission_classes = (AllowAny,)
     queryset = Snippet.objects.all()
     serializer_class = SnippetSerializer
-    search_fields = ('title', 'id')
+    search_fields = ('title', 'id', 'photo')
     # permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
 
 

@@ -1,7 +1,7 @@
 from datetime import date
 
 from django.db import models
-from django.core.validators import validate_comma_separated_integer_list
+from django.core.validators import validate_comma_separated_integer_list, FileExtensionValidator
 from django.conf import settings
 from django.utils import timezone
 
@@ -10,6 +10,8 @@ from pygments.styles import get_all_styles
 from pygments.lexers import get_lexer_by_name
 from pygments.formatters.html import HtmlFormatter
 from pygments import highlight
+
+from services.upload import get_path_upload_photo, validate_size_image
 
 LEXERS = [item for item in get_all_lexers() if item[1]]
 LANGUAGE_CHOICES = sorted([(item[1][0], item[0]) for item in LEXERS])
@@ -60,7 +62,10 @@ class ParentModel(models.Model):
 
 
 class Snippet(ParentModel):
-    pass
+    photo = models.ImageField(upload_to=get_path_upload_photo, verbose_name='Фото', blank=True, null=True,
+                              validators=[FileExtensionValidator(allowed_extensions=['jpg', 'png', 'tiff']),
+                                          validate_size_image]
+                              )
 
 
 class PassportPerson(ParentModel):

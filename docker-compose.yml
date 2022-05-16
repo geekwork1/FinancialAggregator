@@ -1,0 +1,96 @@
+version: "3.9"
+
+services:
+#  redis:
+#    image: redis
+#    restart: always
+  db:
+    container_name: postgres
+    privileged: true
+    image: postgres:14
+    restart: always
+#    expose:co
+#      - 5432
+    ports:
+    - 5432:5432
+    volumes:
+##     Create directory for init to database db container with our parameters
+##      - ./2. Init Database:/docker-entrypoint-initdb.d
+##      Save date off db container to directory our host machine
+      - ./postgres_data:/var/lib/postgresql/data
+#    environment:
+#      - POSTGRES_DB=finaggregator
+#      - POSTGRES_USER=finaggregator
+#      - POSTGRES_PASSWORD=FA@2022
+    env_file:
+      - backend/.env
+
+##    Added check do it db container
+#    healthcheck:
+#      test: ["CMD-SHELL", "pg_isready -U finaggregator -d finaggregator"]
+#      interval: 10s
+#      timeout: 5s
+#      retries: 5
+#      start_period: 10s
+##    limit resource use db container
+#    deploy:
+#      resources:
+#        limits:
+#          cpus: '1'
+#          memory: 4G
+
+
+
+  adminer:
+      image: adminer:4.8.0-standalone
+      restart: always
+      ports:
+        - 8080:8080
+      depends_on:
+        - db
+
+
+
+  backend:
+    container_name: backend
+    restart: on-failure
+    build:
+      context: backend
+    volumes:
+#                     workdir in Dockerfile
+      - ./backend:/FinancialAggregator/backend
+#      - static:/static
+    env_file:
+      - backend/.env
+    ports:
+      - 8000:8000
+#    expose:
+#      - 8080
+    depends_on:
+      - db
+#
+#  nginx:
+#    container_name: nginx
+#    build:
+#      context: nginx
+#    ports:
+#      - "8000:80"
+#    depends_on:
+#      - backend
+#
+#
+  frontend:
+    container_name: frontend
+    restart: always
+    build:
+      context: ./frontend
+    volumes:
+      - ./frontend:/frontend
+    ports:
+      - "80:80"
+#    depends_on:
+#      - nginx
+
+volumes:
+  postgres_data:
+

@@ -102,7 +102,7 @@ celerybeat.pid
 *.sage.py
 
 # Environments
-.env
+backend/.env
 .venv
 env/
 venv/
@@ -131,3 +131,5 @@ dmypy.json
 
 settings_local.py/
 .idea/
+media/*
+!media/.gitkeep

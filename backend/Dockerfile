@@ -1,28 +1,45 @@
 #Берем образ из докера https://hub.docker.com/_/python за основу
-FROM python:3.10-alpine
+FROM python:3.10
 
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
 
 #Создали переменную для того, чтобы к ней обращаться
-ARG PROJ_DIR=/financialaggregator
+ARG PROJ=/FinancialAggregator
+ARG PROJ_DIR=/FinancialAggregator/backend
 
-# Создадим папку и скопируем нашу директорию внутрь
-RUN mkdir -p ${PROJ_DIR}
-COPY . ${PROJ_DIR}
 
-#Переходим в эту папку
-WORKDIR ${PROJ_DIR}
 
-# Install dependencies required for psycopg2 python package
-RUN apk update && apk add libpq
-RUN apk update && apk add --virtual .build-deps gcc python3-dev musl-dev postgresql-dev
+#ENV VIRTUAL_ENV /env
+#ENV PATH /env/bin:$PATH
+
+
+
+RUN apt-get update\
+    && apt-get install -y postgresql postgresql-contrib libpq-dev python3-dev gunicorn3
+
+#сделаем отдельным слоем, чтобы был кеш и при последующей загрузке 
+#при отсутствии изменений заново не грузить
+ADD ./requirements.txt requirements.txt
 
 #Обновим Pip и установим зависимости для проекта
-RUN pip install -U pip \
-     pip install -r requirements.txt
+RUN pip3 install --upgrade pip
+RUN pip3 install -r requirements.txt
 
+RUN pip3 install gunicorn
+
+
+
+
+# Создадим папку и скопируем нашу директорию внутрь
+RUN mkdir -p ${PROJ}
+COPY . ${PROJ}
+
+#Переходим в папку проекта
+WORKDIR ${PROJ_DIR}
+
+#RUN pip3 install gunicorn
 # Скопируем файл entry.sh и запустим его
 COPY entry.sh /entry.sh
 RUN chmod +x /entry.sh

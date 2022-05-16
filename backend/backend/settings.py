@@ -10,33 +10,87 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 import os
+import json
+import sys
+import environ
+import logging.config
 from pathlib import Path
-
-from django.conf import settings
-from django.conf.urls.static import static
-
-try:
-    from backend.settings_local_backend import *
-except ImportError:
-    print('Not file settings_local_backend.py. Added this file.')
-
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+env = environ.FileAwareEnv(
+    # set casting, default value
+    DEBUG=(bool, False)
+)
+print('.env: ', env.__dict__)
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
+#
+# # Build paths inside the project like this: BASE_DIR / 'subdir'.
+# BASE_DIR = Path(__file__).resolve().parent.parent
+print('BASE_DIR ', BASE_DIR)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-c-31m%zgzd=tj!-sxb05+4=131#b*i@adys$-cpcw@kx44pio^'
+SECRET_KEY = env("DJANGO_SECRET_KEY")
+print('DJANGO_SECRET_KEY', SECRET_KEY)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env("DEBUG")
 
-ALLOWED_HOSTS = []
+DJANGO_ALLOWED_HOSTS = str(env("DJANGO_ALLOWED_HOSTS")).split(" ")
+print('"DJANGO_ALLOWED_HOSTS":  ', DJANGO_ALLOWED_HOSTS)
+
+
+
+
+# try:
+#     VENV_PATH = os.path.dirname(BASE_DIR)
+#     sys.path.append(VENV_PATH)
+#     from settings_local_backend import *
+#     print('    from settings_local_backend import *')
+# except ImportError:
+#     print('Not file settings_local_backend.py. Added this file.',   VENV_PATH)
+
+
+ENGINE = env("POSTGRES_ENGINE")
+NAME = env("POSTGRES_DB")
+USER = env("POSTGRES_USER")
+PASSWORD = env("POSTGRES_PASSWORD")
+HOST = env("POSTGRES_HOST")
+# HOST = '127.0.0.1'
+PORT = env("POSTGRES_PORT")
+
+print("POSTGRES_ENGINE", ENGINE)
+print("POSTGRES_DB", NAME)
+print("POSTGRES_USER", USER)
+print("POSTGRES_PASSWORD", PASSWORD)
+print("POSTGRES_HOST", HOST)
+print("POSTGRES_PORT", PORT)
+
+# Settings for Docker-compose
+DATABASES = {
+
+
+    # 'default': env.db(),
+    'default': {
+        'ENGINE': ENGINE,
+        'NAME': NAME,
+        'USER': USER,
+        'PASSWORD': PASSWORD,
+        'HOST': HOST,
+        'PORT': int(PORT)
+    },
+
+    'extra': env.db_url('SQLITE_URL', default='sqlite:////tmp/my-tmp-sqlite.db')
+}
+
+
 
 # Application definition
 
 INSTALLED_APPS = [
+    # added file config
+    'mainapp.apps.MainappConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -44,9 +98,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'mainapp',
+    # 'mainapp',
     'corsheaders',
     'django_filters',
+    'storages'
 ]
 
 MIDDLEWARE = [
@@ -124,14 +179,22 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
 STATIC_URL = '/static/'
-STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, "static"),
-)
-VENV_PATH = os.path.dirname(BASE_DIR)
-STATIC_ROOT = os.path.join(VENV_PATH, 'static_root')
 
-MEDIA_URL = 'media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# if DEBUG:
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static')
+]
+# else:
+VENV_PATH = os.path.dirname(BASE_DIR)
+# STATIC_ROOT = os.path.join(VENV_PATH, 'static_root')
+STATIC_ROOT = os.path.join(BASE_DIR, 'static_root')
+
+# VENV_PATH = os.path.dirname(BASE_DIR)
+# STATIC_ROOT = os.path.join(VENV_PATH, 'static_root')
+
+# MEDIA_URL = 'media/'
+# MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
@@ -161,10 +224,53 @@ CORS_ORIGIN_ALLOW_ALL = True
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "http://0.0.0.0:3000",
     "http://localhost:8080",
     "http://10.0.0.133:8080",
+    "http://localhost:8000",
+    "http://0.0.0.0:8000",
+    "http://0.0.0.0:8080",
+    "http://localhost:80",
+    "http://0.0.0.0:80",
 ]
+
+ALLOWED_HOSTS = ['*']
 
 LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'Europe/Moscow'
+
+
+
+
+# Clear prev config
+LOGGING_CONFIG = None
+
+# Get loglevel from env
+LOGLEVEL = os.getenv('DJANGO_LOGLEVEL', 'info').upper()
+
+logging.config.dictConfig({
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'console': {
+            'format': '%(asctime)s %(levelname)s [%(name)s:%(lineno)s] %(module)s %(process)d %(thread)d %(message)s',
+        },
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'console',
+        },
+    },
+    'loggers': {
+        '': {
+            'level': LOGLEVEL,
+            'handlers': ['console',],
+        },
+    },
+})
+
+
+
