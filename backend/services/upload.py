@@ -8,7 +8,7 @@ def get_path_upload_photo(instance, file):
     format:
             (media)/photo/user_id/photo.jpg(png, tiff)
     """
-    return f'photo/{instance.owner_id}/{file}'
+    return f'photo/user_{instance.owner_id}/{file}'
 
 
 def get_path_upload_avatar(instance, file):
@@ -16,7 +16,7 @@ def get_path_upload_avatar(instance, file):
     format:
             (media)/photo/user_id/photo.jpg(png, tiff)
     """
-    return f'avatar/{instance.owner_id}/{file}'
+    return f'avatar/user_{instance.owner_id}/{file}'
 
 
 def validate_size_image(file_obj):

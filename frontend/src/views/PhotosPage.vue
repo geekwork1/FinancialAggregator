@@ -62,7 +62,7 @@ export default {
       try {
         await axios
             // .get(`https://jsonplaceholder.typicode.com/photos?_limit=10`)
-            .get(`http://127.0.0.1:8000/api/snippet/`)
+            .get(`${this.$store.getters.getServerUrl}/snippet/`)
             .then(response=> this.photos = response.data.results)
         } catch (e) { this.errors.push(e) }
       },

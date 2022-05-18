@@ -5,7 +5,7 @@
       <button @click="searchText(myquery) " class="btn btn-success">Search</button>
     </div>
 
-    <form @submit.prevent="submitForm" >
+    <form @submit.prevent="submitForm" enctype="multipart/form-data">
       <div class="form-group row">
         <input type="text" class="form-control col-3 mx-2" placeholder="Title" v-model="snippet.title">
         <input type="text" class="form-control col-3 mx-2" placeholder="Owner" v-model="snippet.owner">
@@ -103,35 +103,25 @@ export default {
       this.dialogVisible = true
     },
 
+    async sendFormWithImageToServer() {
 
-    addPhotoServer(){
-
-      const reader = new FileReader()
-      reader.readAsDataURL(this.img[0])
-      reader.onload = () => {
-        let photo= {
-          photo: reader.result
-        }
-      }
       let fd = new FormData();
-      fd.append('file', this.img)
-      fd.append('photo', this.img.name)
+      fd.append('photo', this.img[0])
       fd.append('id', this.snippet.id)
       fd.append('owner', this.snippet.owner)
       fd.append('title', this.snippet.title)
       fd.append('snippet', this.snippet)
-      console.log('fd', fd)
+      fd.append('created', this.snippet.created)
+
+      await axios.post(`${this.$store.getters.getServerUrl}/snippet/`, fd);
+
     },
-
-
-
-
 
     searchText(){
       console.log('this.myquery ', this.myquery);
       this.currentPage = '1'
       this.getSnippets()
-      // this.myquery = ''
+
     },
     loadNext(){
       this.currentPage++
@@ -152,7 +142,6 @@ export default {
       try {
         this.showNextButton = false
         this.showPrevButton = false
-        // let BASE_URL=BASE_URL;
         await axios
 
             .get(`${this.$store.getters.getServerUrl}/snippet/?page=${this.currentPage}&search=${this.myquery}`)
@@ -170,17 +159,10 @@ export default {
       }
     },
     async createSnippet(){
-      this.addPhotoServer()
       try {
-        await axios.post(`${this.$store.getters.getServerUrl}/snippet/`, this.snippet,
-            {
-              headers: {
-                'Content-Type': 'multipart/form-data',
-                data: this.fd
-              }
-            }
-        )
-
+        await this.sendFormWithImageToServer();
+        this.snippet = {};
+        this.img = [];
         await this.getSnippets();
       } catch (e) {
         this.errors.push(e)

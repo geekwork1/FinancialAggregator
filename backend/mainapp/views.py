@@ -1,10 +1,11 @@
 from django.shortcuts import render
+from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.generics import GenericAPIView
-from rest_framework.viewsets import ModelViewSet,ReadOnlyModelViewSet
+from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 from rest_framework import permissions, renderers, filters
 from mainapp.models import Person, Client, PassportPerson, Service, ServiceCredit, Bank, Document, \
     ClientFinanceHistory, Snippet
@@ -19,8 +20,9 @@ from django.contrib.auth.models import User
 https://www.django-rest-framework.org/tutorial/1-serialization/
 """
 
+
 class ListPagination(PageNumberPagination):
-    page_size = 5
+    page_size = 10
 
 
 class ParentModelViewSet(ModelViewSet):
@@ -30,10 +32,12 @@ class ParentModelViewSet(ModelViewSet):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
     pagination_class = ListPagination
     filter_backends = (filters.SearchFilter,)
+
     # search_fields = ('',)
 
     @action(detail=True, renderer_classes=[renderers.StaticHTMLRenderer])
     def highlight(self, request, *args, **kwargs):
+        print(f'self.request.user:  {self.request.__dict__}')
         snippet = self.get_object()
         return Response(snippet.highlighted)
 
@@ -44,10 +48,14 @@ class ParentModelViewSet(ModelViewSet):
         serializer.save()
 
 
+
 class SnippetDetail(ParentModelViewSet):
-    permission_classes = (AllowAny,)
-    queryset = Snippet.objects.all()
     serializer_class = SnippetSerializer
+    parser_classes = (MultiPartParser, FormParser)
+    permission_classes = (AllowAny,)
+
+    queryset = Snippet.objects.all()
+
     search_fields = ('title', 'id', 'photo')
     # permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
 

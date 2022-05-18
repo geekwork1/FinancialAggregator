@@ -4,9 +4,7 @@ FROM node:16-alpine
 #Создали переменную для того, чтобы к ней обращаться
 ARG PROJ_DIR=/FinancialAggregator/frontend
 #
-## Создадим папку и скопируем нашу директорию внутрь
-RUN mkdir -p ${PROJ_DIR}
-COPY . ${PROJ_DIR}
+
 
 #Переходим в эту папку
 WORKDIR ${PROJ_DIR}
@@ -18,8 +16,12 @@ COPY package-lock.json ${PROJ_DIR}
 
 RUN npm install
 
-#for develop
 
+
+## Создадим папку и скопируем нашу директорию внутрь
+RUN mkdir -p ${PROJ_DIR}
+COPY . ${PROJ_DIR}
+#for develop
 CMD ["npm", "run", "serve"]
 
 #for production

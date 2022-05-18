@@ -11,6 +11,8 @@ from django.contrib.auth.models import User
 
 
 class SnippetSerializer(serializers.ModelSerializer):
+    photo = serializers.ImageField()
+
     # owner = serializers.ReadOnlyField(source='owner.username')
     class Meta:
         model = Snippet
@@ -18,7 +20,6 @@ class SnippetSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = User
         fields = ['id', 'username']
@@ -66,7 +67,7 @@ class DocumentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Document
         fields = [
-            'name','client', 'order', 'decree', 'lease_contract', 'document',
+            'name', 'client', 'order', 'decree', 'lease_contract', 'document',
             'declaration_one', 'declaration_two', 'declaration_three', 'balance_one',
             'balance_two', 'balance_three', 'updated', 'owner'
         ]
