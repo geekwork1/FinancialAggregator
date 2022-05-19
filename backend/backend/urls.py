@@ -26,6 +26,7 @@ urlpatterns = [
     path('contact', mainapp.contact, name='contact'),
     path('admin/', admin.site.urls),
     path('api/', include('mainapp.urls')),
+    path('v1/', include('mainapp.routes'))
 ]
 
 # urlpatterns = format_suffix_patterns(urlpatterns)
