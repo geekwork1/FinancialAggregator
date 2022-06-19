@@ -13,6 +13,7 @@
       mdi-arrow-left
     </v-icon>Назад
   </v-btn>
+
   <v-btn
       class="ma-2"
       color="primary"
@@ -21,7 +22,7 @@
   >
     <v-icon
         dark
-        rigt
+        right
     >
       mdi-arrow-right
     </v-icon>Вперед

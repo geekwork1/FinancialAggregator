@@ -8,9 +8,9 @@ schema_view = get_schema_view(
     openapi.Info(
         title="Finaggregator API",
         default_version='v1',
-        description="Пример создания подьзовательских фалов на Django Rest Framework",
-        terms_of_service="https://www.delevoper.ru/",
-        contact=openapi.Contact(email="mig7676@ua.ru"),
+        description="Пример создания пользовательских запросов на DRF Finaggregator",
+        site_of_service="https://www.delevoper.ru/",
+        contact=openapi.Contact(email="mig7676@ya.ru"),
         license=openapi.License(name="BSD License"),
     ),
     public=True,

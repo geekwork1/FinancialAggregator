@@ -13,6 +13,9 @@ from pygments import highlight
 
 from services.upload import get_path_upload_photo, validate_size_image
 
+from django.contrib.auth import get_user_model as user_model
+User = user_model()
+
 LEXERS = [item for item in get_all_lexers() if item[1]]
 LANGUAGE_CHOICES = sorted([(item[1][0], item[0]) for item in LEXERS])
 STYLE_CHOICES = sorted((item, item) for item in get_all_styles())
@@ -37,7 +40,7 @@ class ParentModel(models.Model):
     title = models.CharField(max_length=100, blank=True, default='')
     status_active = models.BooleanField(default=True)
     status_delete = models.BooleanField(default=False)
-    owner = models.ForeignKey('auth.User', on_delete=models.CASCADE,
+    owner = models.ForeignKey(User, on_delete=models.CASCADE,
                               related_name="%(app_label)s_%(class)s_related",
                               related_query_name="%(app_label)s_%(class)ss")
 
@@ -184,8 +187,7 @@ class Service(ParentModel):
 class ServiceCredit(ParentModel):
     name = models.CharField(max_length=100, default='', verbose_name='Заказ кредита')
     task = models.TextField(max_length=300, verbose_name='Описание кредита', default='', blank=True)
-    client = models.ForeignKey(Client, on_delete=models.SET_DEFAULT, default='Данные по клиенту отсутствуют',
-                               verbose_name='Клиент по услуге')
+    client = models.ForeignKey(Client, on_delete=models.PROTECT, verbose_name='Клиент по услуге')
     total = models.CharField(max_length=12, default='0', validators=[validate_comma_separated_integer_list])
     deposit = models.BooleanField(verbose_name='Наличие залога', default=False)
     credit_term = models.PositiveSmallIntegerField("year", choices=settings.NUMBER_OF_YEARS, default=1)

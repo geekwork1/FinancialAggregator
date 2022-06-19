@@ -7,15 +7,24 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.generics import GenericAPIView
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 from rest_framework import permissions, renderers, filters
+
+from backend import settings
 from mainapp.models import Person, Client, PassportPerson, Service, ServiceCredit, Bank, Document, \
     ClientFinanceHistory, Snippet
 from mainapp.permmissions import IsOwnerOrReadOnly
 from mainapp.serializers import PersonSerializer, ClientSerializer, PassportPersonSerializer, ServiceSerializer, \
     ServiceCreditSerializer, BankSerializer, DocumentSerializer, ClientFinanceHistorySerializer, \
     UserSerializer, SnippetSerializer
-from django.contrib.auth.models import User
-
+# from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model as user_model
+User = user_model()
 # Create your views here.
+# from usersapp.models import User
+# User = settings.AUTH_USER_MODEL
+from backend.settings import AUTH_USER_MODEL
+
+
+
 """
 https://www.django-rest-framework.org/tutorial/1-serialization/
 """

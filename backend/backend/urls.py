@@ -26,7 +26,12 @@ urlpatterns = [
     path('contact', mainapp.contact, name='contact'),
     path('admin/', admin.site.urls),
     path('api/', include('mainapp.urls')),
-    path('v1/', include('mainapp.routes'))
+    path('v1/', include('mainapp.routes')),
+
+    path('api-auth/', include('rest_framework.urls')),
+    path('auth/', include('djoser.urls')),
+    path('auth/', include('djoser.urls.jwt')),
+    path('userprofile/', include('userprofileapp.routes'))
 ]
 
 # urlpatterns = format_suffix_patterns(urlpatterns)

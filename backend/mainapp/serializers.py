@@ -3,7 +3,9 @@ from rest_framework.permissions import AllowAny
 
 from mainapp.models import PassportPerson, Person, Client, ClientFinanceHistory, Document, Bank, Service, \
     ServiceCredit, Snippet
-from django.contrib.auth.models import User
+# from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
+User = get_user_model()
 
 """
     https://www.django-rest-framework.org/tutorial/1-serialization/

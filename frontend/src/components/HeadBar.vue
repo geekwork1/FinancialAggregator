@@ -11,7 +11,13 @@
       <v-btn outlined class="ml-3">
         <router-link to="/photos">Фотографии</router-link>
       </v-btn>
-    </v-container>
+
+
+  <v-btn outlined color="success" class="ml-3">
+    <router-link to="/login">Login</router-link>
+  </v-btn>
+
+  </v-container>
   </div>
 
 

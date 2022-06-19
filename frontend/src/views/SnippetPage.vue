@@ -113,7 +113,7 @@ export default {
       fd.append('snippet', this.snippet)
       fd.append('created', this.snippet.created)
 
-      await axios.post(`${this.$store.getters.getServerUrl}/snippet/`, fd);
+      await axios.post(`${this.$store.getters.getServerUrl}/api/snippet/`, fd);
 
     },
 
@@ -144,7 +144,7 @@ export default {
         this.showPrevButton = false
         await axios
 
-            .get(`${this.$store.getters.getServerUrl}/snippet/?page=${this.currentPage}&search=${this.myquery}`)
+            .get(`${this.$store.getters.getServerUrl}/api/snippet/?page=${this.currentPage}&search=${this.myquery}`)
             .then(response =>
                 this.snippets = response.data
             )
@@ -170,7 +170,7 @@ export default {
     },
     async editSnippet(){
       try {
-        await axios.put(`${this.$store.getters.getServerUrl}/snippet/${this.snippet.id}/`, this.snippet);
+        await axios.put(`${this.$store.getters.getServerUrl}/api/snippet/${this.snippet.id}/`, this.snippet);
         await this.getSnippets();
         this.snippet = {};
       } catch (e) {
@@ -179,7 +179,7 @@ export default {
     },
     async deleteSnippet(snippet){
       try {
-        await axios.delete(`${this.$store.getters.getServerUrl}/snippet/${snippet.id}/`, this.snippet);
+        await axios.delete(`${this.$store.getters.getServerUrl}/api/snippet/${snippet.id}/`, this.snippet);
         this.showNextButton = false
         this.showPrevButton = false
         this.currentPage =1
