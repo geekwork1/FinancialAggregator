@@ -1,22 +1,23 @@
 from rest_framework import serializers
 
 from userprofileapp.models import UserProfile
-from usersapp.models import User
+from usersapp.models import MainUser
+from mainapp.serializers import MainUserSerializer
 
 
 
 
-class UserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = (
-            'pk', 'username', 'email', 'is_staff'
-        )
+# class UserSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = User
+#         fields = (
+#             'pk', 'username', 'email', 'is_staff'
+#         )
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
     # nest the profile inside the user serializer
-    user = UserSerializer()
+    user = MainUserSerializer()
 
     class Meta:
         model = UserProfile

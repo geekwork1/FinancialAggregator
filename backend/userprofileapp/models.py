@@ -1,13 +1,13 @@
 from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
 from django.utils.translation import gettext_lazy as _
-from usersapp.models import User
+from usersapp.models import MainUser
 
 
 class UserProfile(models.Model):
     objects = models.Manager()
 
-    user            = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True, related_name='userprofile')
+    user            = models.OneToOneField(MainUser, on_delete=models.CASCADE, primary_key=True, related_name='userprofile')
     avatar          = models.ImageField(upload_to='profile/photo', blank=True)
     phone           = PhoneNumberField(blank=True)
     inn_field       = models.IntegerField(null=True, blank=True)

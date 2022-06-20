@@ -64,6 +64,8 @@ class ParentModel(models.Model):
         super().save(*args, **kwargs)
 
 
+
+
 class Snippet(ParentModel):
     photo = models.ImageField(upload_to=get_path_upload_photo, verbose_name='Фото', blank=True, null=True,
                               validators=[FileExtensionValidator(allowed_extensions=['jpg', 'png', 'tiff']),

@@ -5,7 +5,7 @@ from mainapp.models import PassportPerson, Person, Client, ClientFinanceHistory,
     ServiceCredit, Snippet
 # from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
-User = get_user_model()
+MainUser = get_user_model()
 
 """
     https://www.django-rest-framework.org/tutorial/1-serialization/
@@ -21,10 +21,10 @@ class SnippetSerializer(serializers.ModelSerializer):
         fields = ['id', 'title', 'owner', 'created', 'photo']
 
 
-class UserSerializer(serializers.ModelSerializer):
+class MainUserSerializer(serializers.ModelSerializer):
     class Meta:
-        model = User
-        fields = ['id', 'username']
+        model = MainUser
+        fields = ['id', 'username', 'username', 'email', 'is_staff']
 
 
 class PersonSerializer(serializers.ModelSerializer):

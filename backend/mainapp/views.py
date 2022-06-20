@@ -14,7 +14,7 @@ from mainapp.models import Person, Client, PassportPerson, Service, ServiceCredi
 from mainapp.permmissions import IsOwnerOrReadOnly
 from mainapp.serializers import PersonSerializer, ClientSerializer, PassportPersonSerializer, ServiceSerializer, \
     ServiceCreditSerializer, BankSerializer, DocumentSerializer, ClientFinanceHistorySerializer, \
-    UserSerializer, SnippetSerializer
+    MainUserSerializer, SnippetSerializer
 # from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model as user_model
 User = user_model()
@@ -72,7 +72,7 @@ class SnippetDetail(ParentModelViewSet):
 class UserDetail(ReadOnlyModelViewSet):
     permission_classes = [IsOwnerOrReadOnly]
     queryset = User.objects.all()
-    serializer_class = UserSerializer
+    serializer_class = MainUserSerializer
 
 
 class PassportPersonDetail(ParentModelViewSet):
